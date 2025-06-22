@@ -7,7 +7,7 @@ from telegram.ext import (
     filters, ContextTypes
 )
 
-BOT_TOKEN = "7588448104:AAEYjeqjPE32k-1GNQ5OJP76QXOpX7YgB3A"
+BOT_TOKEN = "7635231809:AAGqzxAVLOHgEBTLJXaA7GK0glG7Za6IWiU"
 GC_ID = -1002347957556
 
 slot_active = False
