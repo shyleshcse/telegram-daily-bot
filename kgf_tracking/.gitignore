@@ -1,0 +1,3 @@
+echo uploads/> C:\Users\shyle\OneDrive\Desktop\kgf\kgf_tracking\.gitignore
+echo __pycache__>> C:\Users\shyle\OneDrive\Desktop\kgf\kgf_tracking\.gitignore
+echo *.pyc>> C:\Users\shyle\OneDrive\Desktop\kgf\kgf_tracking\.gitignore

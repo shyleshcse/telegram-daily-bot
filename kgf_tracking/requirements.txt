@@ -1,0 +1,3 @@
+echo flask==2.3.3> C:\Users\shyle\OneDrive\Desktop\kgf\kgf_tracking\requirements.txt
+echo beautifulsoup4==4.12.3>> C:\Users\shyle\OneDrive\Desktop\kgf\kgf_tracking\requirements.txt
+echo gunicorn==23.0.0>> C:\Users\shyle\OneDrive\Desktop\kgf\kgf_tracking\requirements.txt

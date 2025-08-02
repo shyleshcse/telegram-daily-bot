@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K.G.F Tracking by JK</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        .container { max-width: 600px; margin: auto; }
+        .error { color: red; }
+        .hidden { display: none; }
+        button { margin-top: 20px; padding: 10px 20px; }
+        pre { text-align: left; }
+        ul { list-style: none; padding: 0; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Upload View -->
+        <div id="upload-view" class="{% if view != 'upload' %}hidden{% endif %}">
+            <h1>🚀 K.G.F Tracking by JK</h1>
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+            <form id="upload-form" method="POST" action="/upload_main" enctype="multipart/form-data">
+                <p>Upload Main Tweet File:</p>
+                <input type="file" name="main_tweet" accept=".html" required>
+                <br>
+                <button type="submit">Upload</button>
+            </form>
+            <div id="loading" class="hidden">
+                <p>Processing... ⏳</p>
+                <progress value="0" max="100"></progress>
+            </div>
+        </div>
+
+        <!-- Track Tweets View -->
+        <div id="track-tweets-view" class="{% if view != 'track_tweets' %}hidden{% endif %}">
+            <h1>Main Tweet Names</h1>
+            <h3>Unique Usernames:</h3>
+            <pre id="unique-usernames">{{ unique_usernames|join('\n') }}</pre>
+            <h3>Duplicate Usernames:</h3>
+            <pre id="duplicate-usernames">{{ duplicate_list|join('\n') }}</pre>
+            <form id="track-form" method="POST" action="/select_tracking">
+                {% for name in unique_usernames %}
+                    <input type="hidden" name="unique_usernames" value="{{ name }}">
+                {% endfor %}
+                <label for="num_tweets">How many tweets do you want to track?</label>
+                <input type="number" id="num_tweets" name="num_tweets" min="1" required>
+                <br>
+                <button type="submit">Proceed to Tracking</button>
+            </form>
+            <button onclick="copyUnique()">Copy Unique Names</button>
+            <button onclick="copyDuplicates()">Copy Duplicate Names</button>
+        </div>
+
+        <!-- Upload Tracking View -->
+        {% if view == 'upload_tracking' %}
+        <div id="upload-tracking-view" class="{% if view != 'upload_tracking' %}hidden{% endif %}">
+            <h1>Tracking Tweet Uploads 🚀</h1>
+            <form id="tracking-form" method="POST" action="/process_tracking" enctype="multipart/form-data">
+                {% for name in unique_usernames %}
+                    <input type="hidden" name="unique_usernames" value="{{ name }}">
+                {% endfor %}
+                <input type="hidden" name="num_tweets" value="{{ num_tweets }}">
+                {% for i in range(1, num_tweets + 1) %}
+                    <p>Tracking File {{ i }}:</p>
+                    <input type="file" name="tracking_file_{{ i }}" accept=".html" required>
+                {% endfor %}
+                <br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Result View -->
+        <div id="result-view" class="{% if view != 'result' %}hidden{% endif %}">
+            <h1>Missing Tweets 🔍</h1>
+            {% for count, usernames in grouped_missing.items() %}
+                {% if usernames %}
+                    <h3>missing {{ count }} tweets:</h3>
+                    <ul>
+                        {% for username in usernames %}
+                            <li>{{ username }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endfor %}
+            <button onclick="copyResults()">Copy Results</button>
+        </div>
+
+        <!-- Error View -->
+        <div id="error-view" class="{% if view != 'error' %}hidden{% endif %}">
+            <h1>An Error Occurred</h1>
+            <p class="error">{{ error }}</p>
+            <a href="/">Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                const loading = document.getElementById('loading');
+                if (loading) {
+                    loading.classList.remove('hidden');
+                }
+            });
+        });
+
+        function copyUnique() {
+            const text = document.getElementById('unique-usernames').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Unique names copied to clipboard!');
+            });
+        }
+
+        function copyDuplicates() {
+            const text = document.getElementById('duplicate-usernames').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Duplicate names copied to clipboard!');
+            });
+        }
+
+        function copyResults() {
+            let text = '';
+            document.querySelectorAll('#result-view h3').forEach((header, index) => {
+                text += header.textContent + '\n';
+                const usernames = document.querySelectorAll('#result-view ul')[index].querySelectorAll('li');
+                usernames.forEach(username => {
+                    const mainUsername = username.textContent.split('. ')[1].split(' (')[0];
+                    text += mainUsername + '\n';
+                });
+                text += '\n';
+            });
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Results copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
